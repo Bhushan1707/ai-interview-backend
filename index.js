@@ -7,6 +7,9 @@ const PORT = process.env.PORT || 5000;
 
 // Import Central Router
 const apiRoutes = require('./routes');
+const { startCron } = require('./services/cronService');
+
+startCron();
 
 app.use(cors());
 app.use(express.json());

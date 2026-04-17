@@ -21,7 +21,11 @@ module.exports = (sequelize, DataTypes) => {
     groupId: DataTypes.INTEGER,
     senderId: DataTypes.INTEGER,
     receiverId: DataTypes.INTEGER,
-    status: DataTypes.STRING
+    status: {
+      type: DataTypes.ENUM('pending', 'accepted', 'rejected'),
+      defaultValue: 'pending'
+    },
+    type: DataTypes.ENUM('invite', 'request')
   }, {
     sequelize,
     modelName: 'GroupInvite',

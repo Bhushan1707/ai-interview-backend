@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       
       Question.belongsTo(models.Topic, { foreignKey: 'topicId', as: 'topic' });
+      Question.belongsToMany(models.User, { through: models.UserQuestion, foreignKey: 'questionId', as: 'completedBy' });
   
     }
   }

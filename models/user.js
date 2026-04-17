@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
       User.hasMany(models.InterviewSession, { foreignKey: 'userId', as: 'interviews' });
       User.belongsToMany(models.Topic, { through: models.UserTopic, foreignKey: 'userId', as: 'completedTopics' });
       User.belongsToMany(models.Achievement, { through: models.UserAchievement, foreignKey: 'userId', as: 'achievements' });
+      User.belongsToMany(models.Question, { through: models.UserQuestion, foreignKey: 'userId', as: 'completedQuestions' });
   
     }
   }

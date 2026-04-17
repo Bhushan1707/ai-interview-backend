@@ -1,4 +1,5 @@
-const { User, Topic, UserTopic } = require('../models');
+const { User, Topic, UserTopic, UserQuestion, Sequelize } = require('../models');
+const { Op } = Sequelize;
 
 const getProfile = async (req, res) => {
   try {
@@ -53,8 +54,72 @@ const completeTopic = async (req, res) => {
   }
 };
 
+const searchUsers = async (req, res) => {
+  try {
+    const { q } = req.query;
+    if (!q) return res.json([]);
+    
+    const users = await User.findAll({
+      where: {
+        [Op.and]: [
+          {
+            [Op.or]: [
+              { displayName: { [Op.like]: `%${q}%` } },
+              { email: { [Op.like]: `%${q}%` } }
+            ]
+          },
+          { id: { [Op.ne]: req.user.id } }
+        ]
+      },
+      attributes: ['id', 'displayName', 'email', 'xp', 'avatarUrl'],
+      limit: 10
+    });
+    
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+const toggleQuestionCompletion = async (req, res) => {
+  try {
+    const { questionId } = req.params;
+    const userId = req.user.id;
+
+    const existing = await UserQuestion.findOne({
+      where: { userId, questionId }
+    });
+
+    if (existing) {
+      await existing.destroy();
+      res.json({ success: true, completed: false });
+    } else {
+      await UserQuestion.create({ userId, questionId });
+      res.json({ success: true, completed: true });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+const getCompletedQuestions = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const completed = await UserQuestion.findAll({
+      where: { userId },
+      attributes: ['questionId']
+    });
+    res.json(completed.map(c => c.questionId.toString()));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 module.exports = {
   getProfile,
   updateXP,
   completeTopic,
+  searchUsers,
+  toggleQuestionCompletion,
+  getCompletedQuestions,
 };

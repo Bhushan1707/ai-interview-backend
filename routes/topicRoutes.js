@@ -4,6 +4,6 @@ const { getTopics, getTopicQuestions } = require('../controllers/topicController
 const { protect } = require('../middleware/authMiddleware');
 
 router.get('/', getTopics);
-router.get('/:id/questions', getTopicQuestions);
+router.get('/:id/questions', protect, getTopicQuestions);
 
 module.exports = router;

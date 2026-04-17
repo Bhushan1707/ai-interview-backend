@@ -21,10 +21,10 @@ const getTopicQuestions = async (req, res) => {
     const include = [];
     if (markedOnly === 'true') {
        include.push({
-         model: UserQuestion,
-         as: 'completedBy', // Wait, check the alias in associate
-         where: { userId: req.user.id },
-         required: true // INNER JOIN to filter
+         model: Question.associations.completedBy.target, // Get User model
+         as: 'completedBy',
+         where: { id: req.user.id },
+         required: true
        });
     }
 
